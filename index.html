@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kado Spesial Untukmu 🤎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400;1,500&family=Caveat:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #12100e;
+    --bg-medium: #1b1714;
+    --bg-light: #26201c;
+    --accent-brown: #8b6b55;
+    --accent-dark-brown: #4a3527;
+    --accent-cream: #efe7da;
+    --accent-soft-cream: #fbf9f5;
+    --text-white: #ffffff;
+    --text-gray: #a8a096;
+    --text-dark: #211c17;
+    --washi-tape: rgba(239, 231, 218, 0.25);
+    --shadow-soft: rgba(0, 0, 0, 0.4);
+    --font-sans: 'Poppins', sans-serif;
+    --font-serif: 'Cormorant Garamond', serif;
+    --font-hand: 'Caveat', cursive;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--accent-cream);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Canvas Confetti & Particles */
+  #canvas-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent-dark-brown);
+    border-radius: 3px;
+  }
+
+  /* UTILITIES & KEYFRAMES */
+  .fade-in {
+    animation: fadeIn 1s forwards ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .error-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+
+  /* WASHI TAPE EFFECT */
+  .washi-tape {
+    position: absolute;
+    width: 70px;
+    height: 22px;
+    background: rgba(239, 231, 218, 0.3);
+    backdrop-filter: blur(1px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-left: 2px dashed rgba(255,255,255,0.2);
+    border-right: 2px dashed rgba(255,255,255,0.2);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* ======================================================== */
+  /* ---------- 1. LOCK SCREEN (ENVELOPE DESIGN) ----------- */
+  /* ======================================================== */
+  #lock-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: radial-gradient(circle at center, #211a15 0%, #0c0a08 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  #lock-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .envelope-wrapper {
+    width: 100%;
+    max-width: 420px;
+    perspective: 1000px;
+  }
+
+  .envelope {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 40px 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(139, 107, 85, 0.2);
+    text-align: center;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .envelope::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg);
+    width: 100px;
+    height: 25px;
+    background: var(--washi-tape);
+    border-left: 1.5px dashed rgba(255,255,255,0.1);
+    border-right: 1.5px dashed rgba(255,255,255,0.1);
+  }
+
+  .envelope-stamp {
+    width: 60px;
+    height: 60px;
+    background: var(--accent-dark-brown);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border: 2px dashed var(--accent-cream);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .envelope-stamp:hover {
+    transform: scale(1.08) rotate(5deg);
+  }
+
+  .envelope-stamp span {
+    font-size: 28px;
+  }
+
+  .envelope-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 26px;
+    color: var(--accent-cream);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .envelope-sub {
+    font-size: 13px;
+    color: var(--text-gray);
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+  }
+
+  .input-group {
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .input-group input {
+    width: 100%;
+    background: rgba(18, 16, 14, 0.6);
+    border: 1px solid var(--accent-brown);
+    border-radius: 6px;
+    padding: 14px;
+    color: var(--accent-cream);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    letter-spacing: 4px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .input-group input:focus {
+    border-color: var(--accent-cream);
+    box-shadow: 0 0 10px rgba(239, 231, 218, 0.15);
+  }
+
+  .input-group input::placeholder {
+    color: rgba(168, 160, 150, 0.4);
+    letter-spacing: 2px;
+    font-size: 13px;
+  }
+
+  .input-format {
+    font-size: 11px;
+    color: var(--text-gray);
+    margin-bottom: 25px;
+  }
+
+  .btn-unlock {
+    background: var(--accent-dark-brown);
+    color: var(--accent-cream);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 35px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+
+  .btn-unlock:hover {
+    background: var(--accent-brown);
+    transform: translateY(-2px);
+  }
+
+  .btn-unlock:active {
+    transform: translateY(0);
+  }
+
+  .error-message {
+    min-height: 18px;
+    font-size: 12px;
+    color: #cc6666;
+    margin-top: 15px;
+    font-style: italic;
+    display: block;
+  }
+
+  /* ======================================================== */
+  /* ----------------- 2. COUNTDOWN SCREEN ------------------ */
+  /* ======================================================== */
+  #countdown-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: #171412;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  #countdown-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .cd-box {
+    max-width: 500px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 40px 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    border: 1px solid rgba(139, 107, 85, 0.15);
+    position: relative;
+  }
+
+  .cd-box::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 20%;
+    width: 60px;
+    height: 20px;
+    background: var(--washi-tape);
+    transform: rotate(-3deg);
+  }
+
+  .cd-box::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 20%;
+    width: 60px;
+    height: 20px;
+    background: var(--washi-tape);
+    transform: rotate(4deg);
+  }
+
+  .cd-title {
+    font-family: var(--font-hand);
+    font-size: 32px;
+    color: var(--accent-brown);
+    margin-bottom: 5px;
+  }
+
+  .cd-subtitle {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 20px;
+    margin-bottom: 30px;
+    color: var(--accent-cream);
+    line-height: 1.4;
+  }
+
+  .timer-grid {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .timer-item {
+    background: rgba(18, 16, 14, 0.5);
+    min-width: 75px;
+    border-radius: 8px;
+    padding: 12px 5px;
+    border: 1px solid rgba(139, 107, 85, 0.15);
+  }
+
+  .timer-num {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent-cream);
+    display: block;
+    line-height: 1.1;
+  }
+
+  .timer-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-gray);
+    margin-top: 4px;
+    display: block;
+  }
+
+  .cd-note {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-gray);
+    line-height: 1.5;
+  }
+
+  .bypass-btn {
+    margin-top: 40px;
+    background: transparent;
+    border: 1px dashed rgba(139, 107, 85, 0.3);
+    color: rgba(168, 160, 150, 0.3);
+    font-size: 9px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+  }
+
+  .bypass-btn:hover {
+    color: var(--accent-cream);
+    border-color: var(--accent-brown);
+    background: rgba(255,255,255,0.02);
+  }
+
+  /* ======================================================== */
+  /* ------------------- 3. MAIN CONTENT -------------------- */
+  /* ======================================================== */
+  #main-content {
+    display: none;
+    opacity: 0;
+    padding-bottom: 100px;
+  }
+
+  #main-content.visible {
+    display: block;
+    animation: fadeUp 1.2s forwards cubic-bezier(0.1, 0.8, 0.25, 1);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Ambient Music Floating Icon */
+  .music-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(38, 32, 28, 0.85);
+    border: 1.5px solid var(--accent-brown);
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+  }
+
+  .music-toggle.playing {
+    animation: spinVinyl 6s linear infinite;
+  }
+
+  @keyframes spinVinyl {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .music-toggle span {
+    font-size: 20px;
+  }
+
+  /* SECTION WRAPPER */
+  section {
+    padding: 60px 20px;
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* --- HERO SECTION --- */
+  .hero-section {
+    min-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 100px;
+    overflow: hidden;
+  }
+
+  .hero-badge {
+    font-family: var(--font-hand);
+    font-size: 28px;
+    color: var(--accent-brown);
+    margin-bottom: 10px;
+    transform: rotate(-2deg);
+  }
+
+  .hero-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(32px, 8.5vw, 62px);
+    line-height: 1.15;
+    color: var(--accent-soft-cream);
+    margin-bottom: 15px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-gray);
+    margin-bottom: 45px;
+  }
+
+  .hero-25 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-serif);
+    font-size: min(45vw, 360px);
+    font-weight: 600;
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(139, 107, 85, 0.15);
+    z-index: -1;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .scroll-down {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-gray);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .scroll-down-bar {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--accent-brown), transparent);
+    animation: pulseScroll 2s infinite ease-in-out;
+  }
+
+  @keyframes pulseScroll {
+    0% { height: 10px; opacity: 0.3; }
+    50% { height: 40px; opacity: 1; }
+    100% { height: 10px; opacity: 0.3; }
+  }
+
+  /* --- INTERACTIVE HEART COLLAGE --- */
+  .heart-collage-section {
+    text-align: center;
+    overflow: visible;
+  }
+
+  .section-label {
+    font-family: var(--font-hand);
+    font-size: 26px;
+    color: var(--accent-brown);
+    margin-bottom: 5px;
+    transform: rotate(-1deg);
+  }
+
+  .section-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 28px;
+    color: var(--accent-cream);
+    margin-bottom: 40px;
+  }
+
+  .heart-container-outer {
+    position: relative;
+    width: 340px;
+    height: 340px;
+    margin: 0 auto 50px;
+  }
+
+  /* Center core of the Heart */
+  .heart-center-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140px;
+    height: 140px;
+    background: rgba(38, 32, 28, 0.85);
+    border-radius: 50%;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    border: 1px solid rgba(139, 107, 85, 0.25);
+    z-index: 8;
+  }
+
+  .heart-center-text {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--accent-cream);
+    text-align: center;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Heart Photo Frames */
+  .heart-photo-frame {
+    position: absolute;
+    width: 44px;
+    height: 52px;
+    background: var(--accent-soft-cream);
+    padding: 2.5px 2.5px 10px 2.5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    border-radius: 2px;
+    cursor: pointer;
+    z-index: 5;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0s, box-shadow 0.3s ease;
+  }
+
+  .heart-photo-frame:hover, .heart-photo-frame.active {
+    transform: translate(-50%, -50%) scale(2.0) rotate(0deg) !important;
+    z-index: 50;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .heart-photo-frame img {
+    width: 100%;
+    height: 36px;
+    object-fit: cover;
+    display: block;
+    border-radius: 1px;
+    filter: sepia(0.08) contrast(1.03);
+  }
+
+  /* --- POLAROID GALLERY BOARD --- */
+  .gallery-section {
+    background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-medium) 100%);
+  }
+
+  .polaroid-board {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 35px 25px;
+    margin-top: 40px;
+    padding: 10px 0;
+  }
+
+  .polaroid-item {
+    background: var(--accent-soft-cream);
+    padding: 12px 12px 35px;
+    width: 175px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0s;
+  }
+
+  .polaroid-item:hover {
+    transform: scale(1.06) rotate(0deg) !important;
+    z-index: 10;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  }
+
+  .polaroid-item img {
+    width: 100%;
+    height: 165px;
+    object-fit: cover;
+    display: block;
+    filter: sepia(0.1) contrast(1.02);
+  }
+
+  .polaroid-caption {
+    font-family: var(--font-hand);
+    font-size: 17px;
+    color: var(--accent-dark-brown);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.2;
+  }
+
+  .polaroid-item .washi-tape {
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Specific random tilts */
+  .p-tilt-l1 { transform: rotate(-5deg); }
+  .p-tilt-r1 { transform: rotate(4deg); }
+  .p-tilt-l2 { transform: rotate(-3deg); }
+  .p-tilt-r2 { transform: rotate(6deg); }
+
+  /* --- LOVE LETTER --- */
+  .letter-section {
+    padding: 40px 15px;
+  }
+
+  .letter-card {
+    max-width: 600px;
+    margin: 40px auto 0;
+    background: var(--accent-soft-cream);
+    color: var(--accent-dark-brown);
+    padding: 50px 35px;
+    border-radius: 4px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .letter-card::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    right: 40px;
+    width: 80px;
+    height: 24px;
+    background: var(--washi-tape);
+    transform: rotate(3deg);
+    z-index: 5;
+  }
+
+  .letter-content {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.8;
+    text-align: justify;
+  }
+
+  .letter-content p {
+    margin-bottom: 20px;
+  }
+
+  .letter-sign {
+    font-family: var(--font-hand);
+    font-size: 28px;
+    color: var(--accent-brown);
+    text-align: right;
+    margin-top: 40px;
+    line-height: 1.1;
+  }
+
+  /* --- FOOTER --- */
+  footer {
+    text-align: center;
+    padding: 60px 20px 80px;
+    border-top: 1px solid rgba(139, 107, 85, 0.1);
+    background-color: #0c0a08;
+  }
+
+  .footer-sub {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-gray);
+    margin-bottom: 8px;
+  }
+
+  .footer-title {
+    font-family: var(--font-hand);
+    font-size: 26px;
+    color: var(--accent-brown);
+  }
+
+  /* --- INTERACTIVE PHOTO POPUP MODAL --- */
+  .photo-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 16, 14, 0.85);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+
+  .photo-modal.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .modal-card {
+    background: var(--accent-soft-cream);
+    padding: 16px 16px 45px;
+    max-width: 320px;
+    width: 100%;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+    border-radius: 4px;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  }
+
+  .photo-modal.visible .modal-card {
+    transform: scale(1);
+  }
+
+  .modal-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 1px;
+  }
+
+  .modal-text {
+    font-family: var(--font-hand);
+    font-size: 22px;
+    color: var(--accent-dark-brown);
+    text-align: center;
+    margin-top: 15px;
+    line-height: 1.3;
+  }
+
+  .modal-close-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent-dark-brown);
+    color: var(--accent-cream);
+    border: 2px solid var(--accent-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  @media(max-width: 480px) {
+    .heart-container-outer {
+      width: 290px;
+      height: 290px;
+    }
+    .heart-center-core {
+      width: 110px;
+      height: 110px;
+      padding: 6px;
+    }
+    .heart-center-text {
+      font-size: 11px;
+    }
+    .heart-photo-frame {
+      width: 36px;
+      height: 44px;
+      padding: 2px 2px 8px 2px;
+    }
+    .heart-photo-frame img {
+      height: 30px;
+    }
+    .polaroid-board {
+      gap: 20px;
+    }
+    .polaroid-item {
+      width: 145px;
+      padding: 10px 10px 28px;
+    }
+    .polaroid-item img {
+      height: 135px;
+    }
+    .polaroid-caption {
+      font-size: 14px;
+    }
+    .letter-card {
+      padding: 35px 20px;
+    }
+    .letter-content {
+      font-size: 15px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Floating particles background canvas -->
+  <canvas id="canvas-particles"></canvas>
+
+  <!-- BACKGROUND MUSIC AUDIO -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-493.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ======================================================== */
+  /* ---------- 1. LOCK SCREEN (ENVELOPE DESIGN) ----------- */
+  /* ======================================================== -->
+  <div id="lock-screen">
+    <div class="envelope-wrapper">
+      <div class="envelope fade-in">
+        <div class="envelope-stamp" id="stamp-btn">
+          <span>🤎</span>
+        </div>
+        <h2 class="envelope-title">Pesan Khusus Terkunci</h2>
+        <p class="envelope-sub">Hanya boleh dibuka oleh pacar kesayanganku</p>
+        
+        <div class="input-group">
+          <input id="anniversary-input" type="text" inputmode="numeric" maxlength="8" placeholder="DDMMYYYY" autocomplete="off">
+        </div>
+        <p class="input-format">Masukkan tanggal jadian kita</p>
+        
+        <button class="btn-unlock" id="btn-unlock">Buka Surat</button>
+        <span class="error-message" id="error-msg"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== */
+  /* ----------------- 2. COUNTDOWN SCREEN ------------------ */
+  /* ======================================================== -->
+  <div id="countdown-screen" class="hidden">
+    <div class="cd-box fade-in">
+      <h2 class="cd-title">Belum Waktunya, Sayang... 🤎</h2>
+      <p class="cd-subtitle">Kado ulang tahun spesialmu yang ke-25 baru bisa dibuka tanggal 10 Juli 2026!</p>
+      
+      <div class="timer-grid">
+        <div class="timer-item">
+          <span class="timer-num" id="cd-days">00</span>
+          <span class="timer-label">Hari</span>
+        </div>
+        <div class="timer-item">
+          <span class="timer-num" id="cd-hours">00</span>
+          <span class="timer-label">Jam</span>
+        </div>
+        <div class="timer-item">
+          <span class="timer-num" id="cd-mins">00</span>
+          <span class="timer-label">Menit</span>
+        </div>
+        <div class="timer-item">
+          <span class="timer-num" id="cd-secs">00</span>
+          <span class="timer-label">Detik</span>
+        </div>
+      </div>
+      
+      <p class="cd-note">Ayo tunggu sampai hari esok tiba ya, sabar dulu! 🥰</p>
+      
+      <button class="bypass-btn" id="bypass-btn" title="Klik gembok 3 kali di layar masuk untuk bypass secara rahasia">Tes Tampilan Ulang Tahun</button>
+    </div>
+  </div>
+
+  <!-- ======================================================== */
+  /* ------------------- 3. MAIN CONTENT -------------------- */
+  /* ======================================================== -->
+  <div id="main-content">
+    
+    <!-- Floating Audio Toggle -->
+    <div class="music-toggle" id="music-toggle-btn" title="Nyalakan/Matikan Musik Romantis">
+      <span id="music-icon">🎵</span>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-25">25</div>
+      <div class="hero-badge">10 Juli 2026</div>
+      <h1 class="hero-title">Selamat Ulang Tahun<br>yang ke-25, Sayang! 🤎</h1>
+      <p class="hero-subtitle">hari spesial untuk cowok terhebatku</p>
+      <div class="scroll-down">
+        <span>GULIR KE BAWAH</span>
+        <div class="scroll-down-bar"></div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE HEART COLLAGE -->
+    <section class="heart-collage-section">
+      <p class="section-label">alasan aku sayang kamu</p>
+      <h2 class="section-title">Tap foto-foto kecil ini ya!</h2>
+      
+      <div class="heart-container-outer" id="heart-container">
+        <!-- Interactive pictures will be dynamically placed here -->
+        <div class="heart-center-core">
+          <div class="heart-center-text" id="center-heart-text">
+            Kamu adalah segalanya buat aku... 🤎
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- POLAROID GALLERY BOARD -->
+    <section class="gallery-section">
+      <p class="section-label" style="text-align: center;">koleksi memori gemas</p>
+      <h2 class="section-title" style="text-align: center;">Wajah favorit yang paling aku cinta</h2>
+      
+      <div class="polaroid-board">
+        <div class="polaroid-item p-tilt-l1">
+          <div class="washi-tape"></div>
+          <img src="foto1.jpg" alt="Muka ganteng 1">
+          <p class="polaroid-caption">Senyumnya manis banget! 🥰</p>
+        </div>
+        
+        <div class="polaroid-item p-tilt-r1">
+          <div class="washi-tape" style="transform: translateX(-50%) rotate(3deg);"></div>
+          <img src="foto2.jpg" alt="Muka ganteng 2">
+          <p class="polaroid-caption">Gemas & paling ter-sayang! 🤎</p>
+        </div>
+
+        <div class="polaroid-item p-tilt-l2">
+          <div class="washi-tape" style="transform: translateX(-50%) rotate(-4deg);"></div>
+          <img src="foto1.jpg" alt="Muka ganteng 3">
+          <p class="polaroid-caption">Foto pacarku paling tampan! ✨</p>
+        </div>
+
+        <div class="polaroid-item p-tilt-r2">
+          <div class="washi-tape" style="transform: translateX(-50%) rotate(2deg);"></div>
+          <img src="foto2.jpg" alt="Muka ganteng 4">
+          <p class="polaroid-caption">Selamat umur 25, sayangku! 🎉</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SWEET LOVE LETTER -->
+    <section class="letter-section">
+      <p class="section-label" style="text-align: center;">dari lubuk hatiku yang terdalam</p>
+      <h2 class="section-title" style="text-align: center;">Surat Cinta Kecil untuk Pacar Terhebat</h2>
+      
+      <div class="letter-card">
+        <div class="letter-content">
+          <p>Hai Sayangku, pacar terganteng dan tergemas sedunia... 🤎</p>
+          <p>Hari ini adalah hari yang luar biasa spesial buat kamu. Selamat ulang tahun yang ke-25 ya! Akhirnya angka umurmu bertambah satu lagi hehe. Senang rasanya bisa ada di sampingmu untuk merayakan momen berharga ini.</p>
+          <p>Aku bersyukur sekali bisa memilikimu dalam hidupku. Terima kasih ya sudah selalu sabar menghadapi sifatku, selalu mendukungku, memberi perhatian penuh, dan mencintaiku dengan setulus hati. Kamu adalah sosok cowok yang paling sabar dan luar biasa yang pernah aku temui.</p>
+          <p>Di usiamu yang ke-25 ini, doa terbesarku adalah semoga kamu selalu diberikan kesehatan, dilancarkan jalan kariernya, dan didekatkan dengan semua mimpi-mimpi hebatmu. Jangan pernah ragu, karena aku akan selalu ada di sini untuk menjadi pendukung nomor satumu di setiap langkah perjalananmu.</p>
+          <p>Aku sangat mencintaimu, dulu, sekarang, dan selamanya. Semoga hubungan kita terus terjalin erat dengan tawa, pelukan hangat, dan kasih sayang yang tiada habisnya. Selamat ulang tahun, pemilik hatiku! 🫂🤎🔒</p>
+        </div>
+        <p class="letter-sign">Dengan penuh cinta,<br>Pacarmu 🤎</p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p class="footer-sub">dibuat dengan segenap hati</p>
+      <p class="footer-title">Happy Birthday Ke-25 Sayang! 🎉</p>
+    </footer>
+
+  </div>
+
+  <!-- INTERACTIVE PHOTO MODAL POPUP -->
+  <div class="photo-modal" id="photo-modal">
+    <div class="modal-card">
+      <div class="modal-close-btn" id="modal-close-btn">✖</div>
+      <img id="modal-img" src="" alt="Popup Photo">
+      <p class="modal-text" id="modal-text"></p>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      // CONFIGURATION & VARIABLES
+      const PASSWORD_CORRECT = '09062026';
+      // Anniversary Date: June 9 (09062026)
+      const TARGET_BIRTHDAY_DATE = new Date('2026-07-10T00:00:00'); // July 10, 2026
+      
+      const lockScreen = document.getElementById('lock-screen');
+      const countdownScreen = document.getElementById('countdown-screen');
+      const mainContent = document.getElementById('main-content');
+      const anniversaryInput = document.getElementById('anniversary-input');
+      const btnUnlock = document.getElementById('btn-unlock');
+      const stampBtn = document.getElementById('stamp-btn');
+      const errorMsg = document.getElementById('error-msg');
+      const bypassBtn = document.getElementById('bypass-btn');
+      
+      const bgMusic = document.getElementById('bg-music');
+      const musicToggleBtn = document.getElementById('music-toggle-btn');
+      const musicIcon = document.getElementById('music-icon');
+      
+      const heartContainer = document.getElementById('heart-container');
+      const centerHeartText = document.getElementById('center-heart-text');
+      
+      const photoModal = document.getElementById('photo-modal');
+      const modalCloseBtn = document.getElementById('modal-close-btn');
+      const modalImg = document.getElementById('modal-img');
+      const modalText = document.getElementById('modal-text');
+
+      let bypassClickCount = 0;
+      let isUnlocked = false;
+
+      // 1. INPUT FORMATTING (DDMMYYYY)
+      anniversaryInput.addEventListener('input', (e) => {
+        // Only allow digits
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+      });
+
+      // Secret click count on wax stamp to trigger bypass option
+      stampBtn.addEventListener('click', () => {
+        bypassClickCount++;
+        if (bypassClickCount >= 3) {
+          bypassBtn.style.display = 'inline-block';
+          bypassBtn.style.opacity = '1';
+          errorMsg.textContent = 'Mode pengetesan diaktifkan! Tekan tombol "Tes Tampilan Ulang Tahun" di layar countdown setelah ini.';
+          errorMsg.style.color = '#d2bba0';
+          setTimeout(() => { errorMsg.textContent = ''; }, 4000);
+        }
+      });
+
+      // 2. PASSWORD VALIDATION & TRANSITION
+      function checkUnlock() {
+        const inputVal = anniversaryInput.value.trim();
+        if (inputVal === PASSWORD_CORRECT) {
+          isUnlocked = true;
+          errorMsg.textContent = '';
+          
+          // Audio setup (tries to play automatically on user interaction)
+          playMusic();
+          
+          // Check if current date is July 10, 2026 or later
+          const now = new Date();
+          if (now < TARGET_BIRTHDAY_DATE) {
+            // Show countdown screen
+            lockScreen.classList.add('hidden');
+            countdownScreen.classList.remove('hidden');
+            startCountdown();
+          } else {
+            // Show main content directly
+            unlockFullPage();
+          }
+        } else {
+          // Playful cute error messages in Indonesian
+          const errors = [
+            "Ih salah, coba inget-inget lagi tanggal jadian kita 🥺",
+            "Masa tanggal jadian sendiri lupa? Hehe coba lagi ya 🤎",
+            "Salah sayang... Cluenya: 09 Juni (tulis DDMMYYYY) 😘",
+            "Tetot! Salah! Masukin tanggal jadian kita yang benar ya!"
+          ];
+          const randomErr = errors[Math.floor(Math.random() * errors.length)];
+          errorMsg.textContent = randomErr;
+          errorMsg.style.color = '#cc6666';
+          anniversaryInput.classList.add('error-shake');
+          setTimeout(() => { anniversaryInput.classList.remove('error-shake'); }, 500);
+        }
+      }
+
+      btnUnlock.addEventListener('click', checkUnlock);
+      anniversaryInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkUnlock();
+      });
+
+      // Bypass button event
+      bypassBtn.addEventListener('click', () => {
+        unlockFullPage();
+      });
+
+      function unlockFullPage() {
+        lockScreen.classList.add('hidden');
+        countdownScreen.classList.add('hidden');
+        mainContent.classList.add('visible');
+        
+        // Render heart-shaped collage
+        generateHeartCollage();
+        
+        // Start heart particles
+        startFloatingHearts();
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // 3. COUNTDOWN TIMER LOGIC
+      let cdInterval;
+      function startCountdown() {
+        function updateTimer() {
+          const now = new Date();
+          const diff = TARGET_BIRTHDAY_DATE - now;
+
+          if (diff <= 0) {
+            clearInterval(cdInterval);
+            unlockFullPage();
+            return;
+          }
+
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const mins = Math.floor((diff / (1000 * 60)) % 60);
+          const secs = Math.floor((diff / 1000) % 60);
+
+          document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+          document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+          document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+          document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+        }
+        updateTimer();
+        cdInterval = setInterval(updateTimer, 1000);
+      }
+
+      // 4. MUSIC PLAYER SYSTEM (WITH WEB AUDIO FALLBACK)
+      let musicContext;
+      let musicNode;
+      let isPlaying = false;
+      let synthInterval;
+
+      function playMusic() {
+        bgMusic.play().then(() => {
+          isPlaying = true;
+          musicToggleBtn.classList.add('playing');
+          musicIcon.textContent = '🎵';
+        }).catch((err) => {
+          // If browser blocks audio or link fails, run Web Audio API synthesizer
+          console.log("Audio play blocked or failed. Ready to generate custom audio synth.");
+        });
+      }
+
+      function toggleMusic() {
+        if (isPlaying) {
+          bgMusic.pause();
+          stopSynth();
+          isPlaying = false;
+          musicToggleBtn.classList.remove('playing');
+          musicIcon.textContent = '🔇';
+        } else {
+          bgMusic.play().then(() => {
+            isPlaying = true;
+            musicToggleBtn.classList.add('playing');
+            musicIcon.textContent = '🎵';
+          }).catch(() => {
+            // Synthesize melody fallback
+            startSynthMelody();
+            isPlaying = true;
+            musicToggleBtn.classList.add('playing');
+            musicIcon.textContent = '🎵';
+          });
+        }
+      }
+
+      musicToggleBtn.addEventListener('click', toggleMusic);
+
+      // Web Audio Synth Fallback (Plays a very soft ambient chord progression)
+      function startSynthMelody() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          musicContext = new AudioContext();
+          
+          const notes = [261.63, 329.63, 392.00, 523.25, 349.23, 440.00, 523.25, 293.66, 349.23, 440.00, 392.00, 493.88]; // C, E, G, C, F, A, C, D, F, A, G, B
+          let step = 0;
+
+          synthInterval = setInterval(() => {
+            if (!musicContext) return;
+            
+            const osc = musicContext.createOscillator();
+            const gain = musicContext.createGain();
+            
+            osc.connect(gain);
+            gain.connect(musicContext.destination);
+            
+            osc.type = 'sine'; // very soft sine wave
+            osc.frequency.setValueAtTime(notes[step % notes.length], musicContext.currentTime);
+            
+            gain.gain.setValueAtTime(0, musicContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.04, musicContext.currentTime + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.0001, musicContext.currentTime + 1.2);
+            
+            osc.start();
+            osc.stop(musicContext.currentTime + 1.5);
+            
+            step++;
+          }, 800);
+        } catch (e) {
+          console.error("Web Audio Synth is not supported.");
+        }
+      }
+
+      // 7. CANVAS PARTICLE SYSTEM (HEARTS, STARS, CONFETTI)
+      function stopSynth() {
+        if (synthInterval) clearInterval(synthInterval);
+        if (musicContext) {
+          musicContext.close();
+          musicContext = null;
+        }
+      }
+
+
+      // 5. INTERACTIVE HEART COLLAGE GENERATION
+      function generateHeartCollage() {
+        const totalPhotos = 32;
+        const messages = [
+          "Mata kamu yang menenangkan 🤎",
+          "Senyum gemas terfavorit sedunia!",
+          "Pacar paling penyabar 🥰",
+          "Selalu ganteng dalam keadaan apapun!",
+          "Aku suka dengar tawa renyahmu!",
+          "Pipi bulat yang pengen selalu dicubit 🤏",
+          "Pelukan kamu yang paling nyaman 🫂",
+          "Terima kasih sudah lahir ke dunia 🤎",
+          "Pencuri hatiku yang paling sukses!",
+          "Selalu rindu kamu setiap detik...",
+          "Kamu adalah alasan aku tersenyum hari ini",
+          "Sikap sabar kamu yang luar biasa",
+          "Tempatku pulang yang paling aman",
+          "Pendengar terbaik semua ceritaku",
+          "Jagoan hebat kesayanganku 🤎",
+          "Selamat umur 25 ya ganteng!"
+        ];
+
+        for (let i = 0; i < totalPhotos; i++) {
+          const t = (i / totalPhotos) * 2 * Math.PI;
+          
+          // Parametric heart formula
+          const x = 16 * Math.pow(Math.sin(t), 3);
+          const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+          
+          // Map to percentages inside a 340px container
+          // x is within [-16, 16], y is within [-17, 12]
+          const xPct = 50 + (x / 17.5) * 45;
+          const yPct = 50 - ((y + 2.5) / 16.5) * 45;
+          
+          const frame = document.createElement('div');
+          frame.className = 'heart-photo-frame';
+          frame.style.left = `${xPct}%`;
+          frame.style.top = `${yPct}%`;
+          
+          // Alternate pictures
+          const imgSrc = i % 2 === 0 ? 'foto1.jpg' : 'foto2.jpg';
+          
+          // Apply slight organic rotation
+          const rotation = (Math.random() * 20) - 10;
+          frame.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+          
+          frame.innerHTML = `<img src="${imgSrc}" alt="Muka ganteng">`;
+          
+          const msg = messages[i % messages.length];
+
+          // Hover / Mouseover effect to change center text
+          frame.addEventListener('mouseenter', () => {
+            centerHeartText.style.opacity = '0';
+            setTimeout(() => {
+              centerHeartText.textContent = msg;
+              centerHeartText.style.opacity = '1';
+            }, 150);
+          });
+          
+          // Click/Tap effect: Open full screen polaroid modal
+          frame.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openModal(imgSrc, msg);
+          });
+          
+          heartContainer.appendChild(frame);
+        }
+      }
+
+      // 6. PHOTO MODAL LOGIC
+      function openModal(imgSrc, text) {
+        modalImg.src = imgSrc;
+        modalText.textContent = text;
+        photoModal.classList.add('visible');
+      }
+
+      function closeModal() {
+        photoModal.classList.remove('visible');
+      }
+
+      modalCloseBtn.addEventListener('click', closeModal);
+      photoModal.addEventListener('click', (e) => {
+        if (e.target === photoModal) closeModal();
+      });
+
+
+      // 7. CANVAS PARTICLE SYSTEM (HEARTS, STARS, CONFETTI)
+      const canvas = document.getElementById('canvas-particles');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      class HeartParticle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = canvas.height + Math.random() * 100;
+          this.size = Math.random() * 12 + 6;
+          this.speedY = -(Math.random() * 1.5 + 0.8);
+          this.speedX = Math.sin(Math.random() * 10) * 0.4;
+          this.opacity = Math.random() * 0.4 + 0.3;
+          // Soft romantic color palette: brown tones, warm cream, white
+          const colors = ['#8b6b55', '#efe7da', '#ffffff', '#4a3527', '#a8a096'];
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+          this.wobble = Math.random() * 0.05;
+          this.wobbleSpeed = Math.random() * 0.02;
+        }
+
+        update() {
+          this.y += this.speedY;
+          this.x += this.speedX + Math.sin(this.y * this.wobble) * 0.2;
+          if (this.opacity > 0.01) this.opacity -= 0.0003;
+        }
+
+        draw() {
+          ctx.save();
+          ctx.globalAlpha = this.opacity;
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          // Draw heart path
+          const topCurveHeight = this.size * 0.3;
+          ctx.moveTo(this.x, this.y + topCurveHeight);
+          ctx.bezierCurveTo(
+            this.x - this.size / 2, this.y - this.size / 2,
+            this.x - this.size, this.y + this.size / 3,
+            this.x, this.y + this.size
+          );
+          ctx.bezierCurveTo(
+            this.x + this.size, this.y + this.size / 3,
+            this.x + this.size / 2, this.y - this.size / 2,
+            this.x, this.y + topCurveHeight
+          );
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      function startFloatingHearts() {
+        function animate() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // Control rate of new floating hearts
+          if (particles.length < 50 && Math.random() < 0.08) {
+            particles.push(new HeartParticle());
+          }
+
+          particles.forEach((p, index) => {
+            p.update();
+            p.draw();
+            // remove dead particles
+            if (p.y < -50 || p.opacity <= 0.01) {
+              particles.splice(index, 1);
+            }
+          });
+
+          requestAnimationFrame(animate);
+        }
+        animate();
+      }
+    });
+  </script>
+</body>
+</html>
