@@ -609,6 +609,7 @@
     width: 100%;
     height: 36px;
     object-fit: cover;
+    object-position: top;
     display: block;
     border-radius: 1px;
     filter: sepia(0.08) contrast(1.03);
@@ -647,6 +648,7 @@
     width: 100%;
     height: 165px;
     object-fit: cover;
+    object-position: top;
     display: block;
     filter: sepia(0.1) contrast(1.02);
   }
@@ -784,6 +786,7 @@
     width: 100%;
     height: 280px;
     object-fit: cover;
+    object-position: top;
     border-radius: 1px;
   }
 
@@ -938,7 +941,7 @@
       <div class="hero-25">25</div>
       <div class="hero-badge">10 Juli 2026</div>
       <h1 class="hero-title">Selamat Ulang Tahun<br>yang ke-25, Sayang! 🤎</h1>
-      <p class="hero-subtitle">hari spesial untuk cowok terhebatku</p>
+      <p class="hero-subtitle">hari spesial untuk cowok terjametku</p>
       <div class="scroll-down">
         <span>GULIR KE BAWAH</span>
         <div class="scroll-down-bar"></div>
@@ -980,13 +983,13 @@
 
         <div class="polaroid-item p-tilt-l2">
           <div class="washi-tape" style="transform: translateX(-50%) rotate(-4deg);"></div>
-          <img src="foto1.jpg" alt="Muka ganteng 3">
+          <img src="foto3.jpg" alt="Muka ganteng 3">
           <p class="polaroid-caption">Foto pacarku paling tampan! ✨</p>
         </div>
 
         <div class="polaroid-item p-tilt-r2">
           <div class="washi-tape" style="transform: translateX(-50%) rotate(2deg);"></div>
-          <img src="foto2.jpg" alt="Muka ganteng 4">
+          <img src="foto4.jpg" alt="Muka ganteng 4">
           <p class="polaroid-caption">Selamat umur 25, sayangku! 🎉</p>
         </div>
       </div>
@@ -1292,7 +1295,7 @@
           frame.style.top = `${yPct}%`;
           
           // Alternate pictures
-          const imgSrc = i % 2 === 0 ? 'foto1.jpg' : 'foto2.jpg';
+          const imgSrc = `foto${(i % 4) + 1}.jpg`;
           
           // Apply slight organic rotation
           const rotation = (Math.random() * 20) - 10;
